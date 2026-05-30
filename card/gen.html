@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Открытка ❤</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Тебе открытка ❤">
+<meta property="og:description" content="Нажми, чтобы открыть тёплое послание">
+<meta property="og:image" content="https://zxcursed667.github.io/proekt1/card/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{--bg:linear-gradient(135deg,#ffe0ec 0%,#ffd6e8 40%,#ffc8dd 100%);
+    --accent:#ff6b9d;--deep:#c2185b;--text:#5a3946;--card-bg:rgba(255,255,255,.93);--card-text:#5a3946;}
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{font-family:"Trebuchet MS",system-ui,sans-serif;background:var(--bg);
+    display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;position:relative;}
+  .bg-heart{position:fixed;bottom:-60px;font-size:28px;opacity:.45;animation:floatUp 10s linear infinite;user-select:none;pointer-events:none;z-index:1;}
+  @keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:0;}10%{opacity:.55;}90%{opacity:.55;}100%{transform:translateY(-115vh) rotate(360deg);opacity:0;}}
+  #mbtn{position:fixed;top:14px;right:14px;z-index:40;width:46px;height:46px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.85);font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+  #mbtn:hover{transform:scale(1.08);}
+
+  #env-screen{position:relative;z-index:3;text-align:center;transition:opacity .5s ease, transform .5s ease;}
+  #env-screen.hide{opacity:0;transform:scale(.85);pointer-events:none;position:absolute;}
+  .envelope{position:relative;width:320px;height:210px;margin:0 auto;cursor:pointer;perspective:900px;
+    filter:drop-shadow(0 18px 40px rgba(0,0,0,.25));animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .envelope .body{position:absolute;inset:0;background:var(--deep);border-radius:10px;z-index:1;}
+  .letter{position:absolute;left:7%;top:9%;width:86%;height:82%;background:#fff;border-radius:8px;z-index:2;
+    display:flex;align-items:center;justify-content:center;font-size:50px;color:var(--accent);
+    box-shadow:0 6px 16px rgba(0,0,0,.15);transition:transform 1s ease .35s;}
+  .front{position:absolute;inset:0;z-index:3;background:var(--accent);
+    clip-path:polygon(0 32%,50% 78%,100% 32%,100% 100%,0 100%);border-radius:10px;}
+  .flap{position:absolute;left:0;top:0;width:100%;height:58%;background:var(--accent);filter:brightness(1.12);z-index:4;
+    clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top center;transition:transform .6s ease, z-index .6s;}
+  .seal{position:absolute;top:28%;left:50%;transform:translateX(-50%);width:38px;height:38px;
+    background:radial-gradient(circle at 35% 30%, #fff6, var(--deep));border-radius:50%;z-index:5;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;
+    box-shadow:0 3px 8px rgba(0,0,0,.25);transition:opacity .3s ease;}
+  .envelope.open .flap{transform:rotateX(175deg);z-index:1;}
+  .envelope.open .letter{transform:translateY(-135%) scale(1.05);z-index:6;}
+  .envelope.open .seal{opacity:0;}
+  .hint{margin-top:34px;color:var(--deep);font-size:16px;opacity:.85;animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+  .card{position:relative;z-index:2;background:var(--card-bg);backdrop-filter:blur(6px);border-radius:28px;
+    padding:42px 32px 34px;max-width:460px;width:92%;text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);opacity:0;transform:translateY(24px) scale(.96);
+    pointer-events:none;transition:opacity .6s ease, transform .6s ease;}
+  .card.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+  .sticker{width:130px;height:130px;object-fit:contain;margin-bottom:6px;
+    animation:beat 1.6s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(0,0,0,.25));}
+  @keyframes beat{0%,100%{transform:scale(1);}25%{transform:scale(1.12);}40%{transform:scale(1);}}
+  h1{color:var(--deep);font-size:28px;margin:6px 0 4px;}
+  .name{color:var(--accent);}
+  .msg{color:var(--card-text);font-size:18px;line-height:1.65;margin:16px 8px 18px;white-space:pre-wrap;min-height:60px;}
+  .caret{display:inline-block;width:2px;height:1em;background:var(--accent);margin-left:2px;vertical-align:text-bottom;animation:blink .7s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .sign{color:var(--accent);font-size:16px;font-style:italic;margin:6px 0 20px;min-height:20px;}
+  .btn{border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--deep));color:#fff;
+    font-size:16px;font-weight:bold;padding:13px 26px;border-radius:999px;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);transition:transform .15s ease;margin:4px;}
+  .btn:hover{transform:translateY(-2px);}
+  .credit{margin-top:16px;font-size:12px;color:var(--card-text);opacity:.55;}
+</style>
+</head>
+<body>
+  <button id="mbtn" onclick="toggleMusic()" title="Музыка">🔈</button>
+
+  <div id="env-screen">
+    <div class="envelope" id="envelope" onclick="openEnvelope()">
+      <div class="body"></div><div class="letter">❤</div><div class="front"></div><div class="flap"></div><div class="seal">❤</div>
+    </div>
+    <p class="hint">нажми на конверт</p>
+  </div>
+
+  <div class="card" id="card">
+    <img class="sticker" src="sticker.webp" alt="Стикер" onerror="this.replaceWith(Object.assign(document.createElement('div'),{textContent:'❤',style:'font-size:90px;line-height:130px'}))">
+    <h1>Для <span class="name" id="who">тебя</span> ❤</h1>
+    <p class="msg"><span id="msg"></span><span class="caret">&nbsp;</span></p>
+    <div class="sign" id="sign"></div>
+    <button class="btn" onclick="fireConfetti()">Конфетти 🎊</button>
+    <div class="credit">сделано с любовью</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+    var P=new URLSearchParams(location.search);
+    var to=(P.get("to")||"тебя").slice(0,40);
+    var msg=(P.get("msg")||"Пусть этот день принесёт тебе улыбку и тепло ✨").slice(0,300);
+    var from=(P.get("from")||"").slice(0,40);
+    var theme=(P.get("theme")||"pink");
+
+    var THEMES={
+      pink:{bg:"linear-gradient(135deg,#ffe0ec 0%,#ffd6e8 40%,#ffc8dd 100%)",accent:"#ff6b9d",deep:"#c2185b",cardBg:"rgba(255,255,255,.93)",cardText:"#5a3946"},
+      sunny:{bg:"linear-gradient(135deg,#fff4c2 0%,#ffe39a 40%,#bfe3ff 100%)",accent:"#ff9f43",deep:"#e8590c",cardBg:"rgba(255,255,255,.94)",cardText:"#6b4a2b"},
+      night:{bg:"linear-gradient(135deg,#1b1740 0%,#2d2466 45%,#3a2d7a 100%)",accent:"#b388ff",deep:"#7c4dff",cardBg:"rgba(42,36,84,.92)",cardText:"#efeaff"}
+    };
+    var th=THEMES[theme]||THEMES.pink;
+    var r=document.documentElement.style;
+    r.setProperty("--bg",th.bg); r.setProperty("--accent",th.accent); r.setProperty("--deep",th.deep);
+    r.setProperty("--card-bg",th.cardBg); r.setProperty("--card-text",th.cardText);
+
+    document.getElementById("who").textContent=to;
+    document.title="Открытка для "+to+" ❤";
+    if(from) document.getElementById("sign").textContent="— "+from;
+
+    var emojis=["❤","💛","💚","💙","💜","⭐","🌸","✨"];
+    for(var i=0;i<14;i++){var h=document.createElement("div");h.className="bg-heart";
+      h.textContent=emojis[Math.floor(Math.random()*emojis.length)];h.style.left=Math.random()*100+"vw";
+      h.style.animationDelay=(Math.random()*10)+"s";h.style.fontSize=(18+Math.random()*26)+"px";document.body.appendChild(h);}
+
+    function typeText(el,text){el.textContent="";var i=0;(function t(){if(i<=text.length){el.textContent=text.slice(0,i);i++;setTimeout(t,32);}})();}
+
+    var opened=false;
+    function openEnvelope(){
+      if(opened) return; opened=true; startMusic();
+      document.getElementById("envelope").classList.add("open");
+      setTimeout(function(){
+        document.getElementById("env-screen").classList.add("hide");
+        document.getElementById("card").classList.add("show");
+        typeText(document.getElementById("msg"), msg);
+        fireConfetti();
+      },1300);
+    }
+
+    function fireConfetti(){
+      if(window.confetti){var colors=[th.accent,th.deep,"#ffd166","#06d6a0","#4cc9f0","#ffd1e0"];
+        confetti({particleCount:140,spread:90,origin:{y:.6},colors:colors});
+        setTimeout(function(){confetti({particleCount:80,angle:60,spread:70,origin:{x:0},colors:colors});},200);
+        setTimeout(function(){confetti({particleCount:80,angle:120,spread:70,origin:{x:1},colors:colors});},200);
+      } else { heartBurst(); }
+    }
+    function heartBurst(){for(var i=0;i<40;i++){var c=document.createElement("div");
+      c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      c.style.cssText="position:fixed;z-index:30;left:50%;top:50%;font-size:"+(16+Math.random()*22)+"px;pointer-events:none;";
+      document.body.appendChild(c);var ang=Math.random()*Math.PI*2,dist=120+Math.random()*220;
+      var x=Math.cos(ang)*dist,y=Math.sin(ang)*dist;
+      c.animate([{transform:"translate(-50%,-50%) scale(.4)",opacity:1},{transform:"translate(calc(-50% + "+x+"px),calc(-50% + "+y+"px)) scale(1.3)",opacity:0}],{duration:900+Math.random()*500,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=function(){this.effect.target.remove();};}}
+
+    var audioCtx=null,musicOn=false,noteIdx=0,musicTimer=null;
+    var melody=[523,587,659,784,659,587,523,659,698,784,880,784,698,659];
+    function startMusic(){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();}catch(e){return;}
+      musicOn=true;document.getElementById("mbtn").textContent="🔊";noteIdx=0;playNote();}
+    function playNote(){if(!musicOn)return;var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type="triangle";o.frequency.value=melody[noteIdx%melody.length];var t=audioCtx.currentTime;
+      g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.04);g.gain.exponentialRampToValueAtTime(0.0001,t+0.34);
+      o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+0.4);noteIdx++;musicTimer=setTimeout(playNote,350);}
+    function stopMusic(){musicOn=false;clearTimeout(musicTimer);document.getElementById("mbtn").textContent="🔇";}
+    function toggleMusic(){if(musicOn)stopMusic();else startMusic();}
+  </script>
+</body>
+</html>
