@@ -32,7 +32,7 @@ proekt1/
     sticker.webp                стикер
     preview.png                 картинка для превью
   bot/
-    bot.py                      код Telegram-бота
+    main.py                     код Telegram-бота
     requirements.txt
     README.md                   инструкция по запуску и хостингу
 ```
