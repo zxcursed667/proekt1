@@ -96,7 +96,10 @@
     var THEMES={
       pink:{bg:"linear-gradient(135deg,#ffe0ec 0%,#ffd6e8 40%,#ffc8dd 100%)",accent:"#ff6b9d",deep:"#c2185b",cardBg:"rgba(255,255,255,.93)",cardText:"#5a3946"},
       sunny:{bg:"linear-gradient(135deg,#fff4c2 0%,#ffe39a 40%,#bfe3ff 100%)",accent:"#ff9f43",deep:"#e8590c",cardBg:"rgba(255,255,255,.94)",cardText:"#6b4a2b"},
-      night:{bg:"linear-gradient(135deg,#1b1740 0%,#2d2466 45%,#3a2d7a 100%)",accent:"#b388ff",deep:"#7c4dff",cardBg:"rgba(42,36,84,.92)",cardText:"#efeaff"}
+      night:{bg:"linear-gradient(135deg,#1b1740 0%,#2d2466 45%,#3a2d7a 100%)",accent:"#b388ff",deep:"#7c4dff",cardBg:"rgba(42,36,84,.92)",cardText:"#efeaff"},
+      mint:{bg:"linear-gradient(135deg,#d6f5e3 0%,#b3ecd1 40%,#a0e7e5 100%)",accent:"#06d6a0",deep:"#087f5b",cardBg:"rgba(255,255,255,.93)",cardText:"#2b4a3e"},
+      ocean:{bg:"linear-gradient(135deg,#cfe8ff 0%,#a9d6ff 40%,#bfeaf0 100%)",accent:"#4ea8de",deep:"#1e6091",cardBg:"rgba(255,255,255,.93)",cardText:"#2b3a4a"},
+      gold:{bg:"linear-gradient(135deg,#fff7e0 0%,#ffeebb 40%,#f7e0a8 100%)",accent:"#e0a818",deep:"#a9760b",cardBg:"rgba(255,255,255,.95)",cardText:"#5a4620"}
     };
     var th=THEMES[theme]||THEMES.pink;
     var r=document.documentElement.style;
@@ -150,6 +153,15 @@
       o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+0.4);noteIdx++;musicTimer=setTimeout(playNote,350);}
     function stopMusic(){musicOn=false;clearTimeout(musicTimer);document.getElementById("mbtn").textContent="🔇";}
     function toggleMusic(){if(musicOn)stopMusic();else startMusic();}
+
+    // Режим превью для скриншотов/бота: ?open=1 — сразу показать открытку без анимации
+    if(P.get("open")==="1"){
+      opened=true;
+      document.getElementById("env-screen").classList.add("hide");
+      document.getElementById("card").classList.add("show");
+      document.getElementById("msg").textContent=msg;
+      var cr=document.querySelector(".caret"); if(cr) cr.style.display="none";
+    }
   </script>
 </body>
 </html>

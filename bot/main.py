@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Телеграм-бот «Генератор открыток».
-Собирает имя / текст / подпись / тему и выдаёт готовую ссылку-открытку.
+Собирает имя / текст / подпись / тему и выдаёт готовую ссылку-открытку
+с превью, QR-кодом и кнопкой «Поделиться».
 
-Хостинг Pella: entry-файл = main.py, токен задаётся в Environment как BOT_TOKEN.
-Локально: установи BOT_TOKEN и запусти `python main.py`.
-Подробнее — в README.md.
+Хостинг Pella: entry-файл = main.py, токен в Environment как BOT_TOKEN.
+Локально: установи BOT_TOKEN и запусти `python main.py`. Подробнее — README.md.
 """
 import os
 import time
@@ -14,12 +14,15 @@ from urllib.parse import quote
 import telebot
 from telebot import types
 
-# Базовый адрес страницы-открытки на GitHub Pages
 BASE_URL = "https://zxcursed667.github.io/proekt1/card/gen.html"
+QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=12&data="
+SHOT_API = "https://image.thum.io/get/width/720/crop/980/"
+PREVIEW_FALLBACK = "https://zxcursed667.github.io/proekt1/card/preview.png"
+REPO_URL = "https://github.com/zxcursed667/proekt1"
 
 TOKEN = os.environ.get("BOT_TOKEN")
 if not TOKEN:
-    raise SystemExit("Не задан BOT_TOKEN. Добавь его в Environment на Pella или в переменную окружения. См. README.md")
+    raise SystemExit("Не задан BOT_TOKEN. Добавь его в Environment на Pella. См. README.md")
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -30,26 +33,45 @@ THEMES = {
     "pink": "Розовая 💗",
     "sunny": "Солнечная ☀️",
     "night": "Ночная 🌙",
+    "mint": "Мятная 🌿",
+    "ocean": "Морская 🌊",
+    "gold": "Золотая ✨",
 }
 
 
-def build_url(d):
+def build_url(d, preview=False):
     parts = ["to=" + quote(d.get("to", "")), "msg=" + quote(d.get("msg", ""))]
     if d.get("from"):
         parts.append("from=" + quote(d["from"]))
     parts.append("theme=" + quote(d.get("theme", "pink")))
+    if preview:
+        parts.append("open=1")
     return BASE_URL + "?" + "&".join(parts)
 
 
-@bot.message_handler(commands=["start", "help"])
+@bot.message_handler(commands=["start"])
 def cmd_start(m):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     kb.add("🎨 Создать открытку")
     bot.send_message(
         m.chat.id,
-        "Привет! 👋 Я соберу красивую интерактивную открытку и дам ссылку, "
-        "которую можно отправить кому угодно. Нажми кнопку, чтобы начать.",
+        "Привет! 👋 Я соберу красивую интерактивную открытку и дам ссылку, превью и QR-код, "
+        "которые можно отправить кому угодно. Нажми кнопку, чтобы начать.",
         reply_markup=kb,
+    )
+
+
+@bot.message_handler(commands=["about"])
+def cmd_about(m):
+    bot.send_message(
+        m.chat.id,
+        "🎀 *Генератор открыток*\n\n"
+        "Собираю персональную анимированную открытку и отдаю ссылку, превью и QR-код.\n"
+        "Открытка работает без бэкенда — всё кодируется прямо в адресе.\n\n"
+        "Стек: Python + pyTelegramBotAPI, HTML/CSS/JS, GitHub Pages.\n"
+        "Код: " + REPO_URL + "\n\nНачать — /start",
+        parse_mode="Markdown",
+        disable_web_page_preview=True,
     )
 
 
@@ -78,9 +100,10 @@ def get_msg(m):
 def get_from(m):
     frm = (m.text or "").strip()
     sessions.setdefault(m.chat.id, {})["from"] = "" if frm == "-" else frm[:40]
-    kb = types.InlineKeyboardMarkup()
-    for key, label in THEMES.items():
-        kb.add(types.InlineKeyboardButton(label, callback_data="theme:" + key))
+    kb = types.InlineKeyboardMarkup(row_width=2)
+    btns = [types.InlineKeyboardButton(label, callback_data="theme:" + key)
+            for key, label in THEMES.items()]
+    kb.add(*btns)
     bot.send_message(m.chat.id, "Выбери оформление:", reply_markup=kb)
 
 
@@ -94,16 +117,44 @@ def choose_theme(c):
     d["theme"] = theme
     url = build_url(d)
     bot.answer_callback_query(c.id, "Готово!")
-    bot.send_message(
-        c.message.chat.id,
-        "Твоя открытка готова! 🎉\n\n" + url + "\n\nПросто перешли эту ссылку тому, кому она предназначена ❤\n\nСоздать ещё одну — /start",
-        disable_web_page_preview=False,
-    )
+
+    share = "https://t.me/share/url?url=" + quote(url) + "&text=" + quote("Тебе открытка ❤")
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton("🎁 Открыть открытку", url=url))
+    kb.add(types.InlineKeyboardButton("📤 Поделиться", url=share))
+
+    # 1) Превью самой открытки (скриншот живой страницы; при сбое — запасная картинка)
+    shot = SHOT_API + build_url(d, preview=True)
+    try:
+        bot.send_photo(c.message.chat.id, shot,
+                       caption="Вот как выглядит твоя открытка 👇", reply_markup=kb)
+    except Exception:
+        bot.send_photo(c.message.chat.id, PREVIEW_FALLBACK,
+                       caption="Твоя открытка готова 👇", reply_markup=kb)
+
+    # 2) QR-код + ссылка
+    qr = QR_API + quote(url)
+    bot.send_photo(c.message.chat.id, qr,
+                   caption="QR-код 📷 наведи камеру — или скопируй ссылку:\n" + url)
+
+    bot.send_message(c.message.chat.id, "Создать ещё одну — /start")
+    sessions.pop(c.message.chat.id, None)
+
+
+def setup_commands():
+    try:
+        bot.set_my_commands([
+            types.BotCommand("start", "Создать открытку 🎨"),
+            types.BotCommand("about", "О боте ℹ️"),
+        ])
+    except Exception as e:
+        print("Не удалось установить меню команд:", e)
 
 
 if __name__ == "__main__":
     print("Бот запущен.")
-    # Устойчивый polling: при сетевых ошибках бот сам перезапускается (важно на хостинге)
+    setup_commands()
+    # Устойчивый polling: при сетевых ошибках бот сам перезапускается
     while True:
         try:
             bot.infinity_polling(skip_pending=True, timeout=30)
