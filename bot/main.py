@@ -16,7 +16,7 @@ from telebot import types
 
 BASE_URL = "https://zxcursed667.github.io/proekt1/card/gen.html"
 QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=12&data="
-SHOT_API = "https://image.thum.io/get/width/720/crop/980/"
+SHOT_API = "https://image.thum.io/get/width/800/wait/2/"
 PREVIEW_FALLBACK = "https://zxcursed667.github.io/proekt1/card/preview.png"
 REPO_URL = "https://github.com/zxcursed667/proekt1"
 
@@ -118,10 +118,8 @@ def choose_theme(c):
     url = build_url(d)
     bot.answer_callback_query(c.id, "Готово!")
 
-    share = "https://t.me/share/url?url=" + quote(url) + "&text=" + quote("Тебе открытка ❤")
     kb = types.InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton("🎁 Открыть открытку", url=url))
-    kb.add(types.InlineKeyboardButton("📤 Поделиться", url=share))
 
     # 1) Превью самой открытки (скриншот живой страницы; при сбое — запасная картинка)
     shot = SHOT_API + build_url(d, preview=True)
@@ -132,12 +130,18 @@ def choose_theme(c):
         bot.send_photo(c.message.chat.id, PREVIEW_FALLBACK,
                        caption="Твоя открытка готова 👇", reply_markup=kb)
 
-    # 2) QR-код + ссылка
+    # 2) QR-код
     qr = QR_API + quote(url)
-    bot.send_photo(c.message.chat.id, qr,
-                   caption="QR-код 📷 наведи камеру — или скопируй ссылку:\n" + url)
+    bot.send_photo(c.message.chat.id, qr, caption="📷 QR-код на открытку")
 
-    bot.send_message(c.message.chat.id, "Создать ещё одну — /start")
+    # 3) Ссылка (нажми, чтобы скопировать) + как поделиться
+    bot.send_message(
+        c.message.chat.id,
+        "Готово! 🎉\n\n🔗 Ссылка (нажми, чтобы скопировать):\n`" + url + "`\n\n"
+        "📤 Чтобы поделиться — перешли превью выше или эту ссылку.\n\nЕщё одну — /start",
+        parse_mode="Markdown",
+        disable_web_page_preview=True,
+    )
     sessions.pop(c.message.chat.id, None)
 
 

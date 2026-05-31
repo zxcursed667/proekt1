@@ -45,11 +45,11 @@
   .hint{margin-top:34px;color:var(--deep);font-size:16px;opacity:.85;animation:pulse 1.8s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 
-  .card{position:relative;z-index:2;background:var(--card-bg);backdrop-filter:blur(6px);border-radius:28px;
+  .card{position:absolute;z-index:2;background:var(--card-bg);backdrop-filter:blur(6px);border-radius:28px;
     padding:42px 32px 34px;max-width:460px;width:92%;text-align:center;
     box-shadow:0 20px 60px rgba(0,0,0,.2);opacity:0;transform:translateY(24px) scale(.96);
     pointer-events:none;transition:opacity .6s ease, transform .6s ease;}
-  .card.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+  .card.show{position:relative;opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
   .sticker{width:130px;height:130px;object-fit:contain;margin-bottom:6px;
     animation:beat 1.6s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(0,0,0,.25));}
   @keyframes beat{0%,100%{transform:scale(1);}25%{transform:scale(1.12);}40%{transform:scale(1);}}
@@ -64,6 +64,11 @@
     box-shadow:0 8px 20px rgba(0,0,0,.25);transition:transform .15s ease;margin:4px;}
   .btn:hover{transform:translateY(-2px);}
   .credit{margin-top:16px;font-size:12px;color:var(--card-text);opacity:.55;}
+  /* Режим превью: без анимаций, чистый скриншот */
+  html.preview *{animation:none!important;transition:none!important;}
+  html.preview .bg-heart{display:none!important;}
+  html.preview #mbtn{display:none!important;}
+  html.preview .hint{display:none!important;}
 </style>
 </head>
 <body>
@@ -156,6 +161,7 @@
 
     // Режим превью для скриншотов/бота: ?open=1 — сразу показать открытку без анимации
     if(P.get("open")==="1"){
+      document.documentElement.classList.add("preview");
       opened=true;
       document.getElementById("env-screen").classList.add("hide");
       document.getElementById("card").classList.add("show");
